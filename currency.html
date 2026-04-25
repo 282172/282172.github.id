@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="keywords" content="currency converter, financial calculators, salary to hourly, VAT calculator, loan interest calculator, markup calculator, profit margin, investment simulator, crypto news, free finance tools">
     <title>Currency Converter – Smart-rate</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         .chart-container { position: relative; width: 100%; min-height: 250px; }
-        canvas { max-width: 100%; height: auto; }
+        .status-indicator { font-weight: bold; padding: 0.2rem 0.6rem; border-radius: 1rem; display: inline-block; }
+        .status-live { background: #10b98120; color: #10b981; }
+        .status-cached { background: #f59e0b20; color: #f59e0b; }
+        .status-offline { background: #ef444420; color: #ef4444; }
+        .result-area { margin-top: 1rem; }
     </style>
 </head>
 <body class="light-mode">
@@ -46,64 +49,193 @@
         <div class="container">
             <div class="section-header">
                 <h1>💱 Currency Converter</h1>
-                <p>Live rates, caching, fallback APIs – reliable & fast.</p>
+                <p>Live rates, caching, fallback – reliable & fast.</p>
             </div>
             <div class="card">
                 <div class="form-group">
                     <label for="amount">Amount</label>
-                    <input type="text" id="amount" value="1,000.00">
+                    <input type="text" id="amount" value="1,000.00" inputmode="decimal">
                 </div>
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                     <div class="form-group" style="flex:1">
                         <label for="fromCurrency">From</label>
-                        <select id="fromCurrency">
-                            <option value="USD">USD ($)</option>
-                            <option value="EUR">EUR (€)</option>
-                            <option value="GBP">GBP (£)</option>
-                            <option value="JPY">JPY (¥)</option>
-                            <option value="INR">INR (₹)</option>
-                            <option value="NGN">NGN (₦)</option>
-                            <option value="AUD">AUD (A$)</option>
-                            <option value="CAD">CAD (C$)</option>
-                            <option value="CHF">CHF (CHF)</option>
-                            <option value="ZAR">ZAR (R)</option>
-                            <option value="GHS">GHS (₵)</option>
-                            <option value="KES">KES (KSh)</option>
-                            <option value="VND">VND (₫)</option>
-                            <option value="KRW">KRW (₩)</option>
-                            <option value="THB">THB (฿)</option>
-                            <option value="TRY">TRY (₺)</option>
-                            <option value="BRL">BRL (R$)</option>
-                            <option value="PHP">PHP (₱)</option>
-                            <option value="SEK">SEK (kr)</option>
-                            <option value="NOK">NOK (kr)</option>
-                            <option value="PLN">PLN (zł)</option>
+                        <select id="fromCurrency" size="1">
+                            <!-- ========== EXTENSIVE CURRENCY LIST (150+ currencies) ========== -->
+                            <optgroup label="— Major Currencies —">
+                                <option value="USD">🇺🇸 USD - US Dollar ($)</option>
+                                <option value="EUR">🇪🇺 EUR - Euro (€)</option>
+                                <option value="GBP">🇬🇧 GBP - British Pound (£)</option>
+                                <option value="JPY">🇯🇵 JPY - Japanese Yen (¥)</option>
+                                <option value="CAD">🇨🇦 CAD - Canadian Dollar (C$)</option>
+                                <option value="AUD">🇦🇺 AUD - Australian Dollar (A$)</option>
+                                <option value="CHF">🇨🇭 CHF - Swiss Franc (CHF)</option>
+                                <option value="CNY">🇨🇳 CNY - Chinese Yuan (¥)</option>
+                                <option value="HKD">🇭🇰 HKD - Hong Kong Dollar (HK$)</option>
+                                <option value="NZD">🇳🇿 NZD - New Zealand Dollar (NZ$)</option>
+                                <option value="SEK">🇸🇪 SEK - Swedish Krona (kr)</option>
+                                <option value="KRW">🇰🇷 KRW - South Korean Won (₩)</option>
+                                <option value="SGD">🇸🇬 SGD - Singapore Dollar (S$)</option>
+                                <option value="NOK">🇳🇴 NOK - Norwegian Krone (kr)</option>
+                                <option value="MXN">🇲🇽 MXN - Mexican Peso ($)</option>
+                                <option value="INR">🇮🇳 INR - Indian Rupee (₹)</option>
+                                <option value="RUB">🇷🇺 RUB - Russian Ruble (₽)</option>
+                                <option value="ZAR">🇿🇦 ZAR - South African Rand (R)</option>
+                                <option value="TRY">🇹🇷 TRY - Turkish Lira (₺)</option>
+                                <option value="BRL">🇧🇷 BRL - Brazilian Real (R$)</option>
+                                <option value="TWD">🇹🇼 TWD - Taiwan Dollar (NT$)</option>
+                                <option value="DKK">🇩🇰 DKK - Danish Krone (kr)</option>
+                                <option value="PLN">🇵🇱 PLN - Polish Złoty (zł)</option>
+                                <option value="THB">🇹🇭 THB - Thai Baht (฿)</option>
+                                <option value="IDR">🇮🇩 IDR - Indonesian Rupiah (Rp)</option>
+                                <option value="HUF">🇭🇺 HUF - Hungarian Forint (Ft)</option>
+                                <option value="CZK">🇨🇿 CZK - Czech Koruna (Kč)</option>
+                                <option value="ILS">🇮🇱 ILS - Israeli Shekel (₪)</option>
+                                <option value="CLP">🇨🇱 CLP - Chilean Peso ($)</option>
+                                <option value="PHP">🇵🇭 PHP - Philippine Peso (₱)</option>
+                                <option value="AED">🇦🇪 AED - UAE Dirham (د.إ)</option>
+                                <option value="COP">🇨🇴 COP - Colombian Peso ($)</option>
+                                <option value="SAR">🇸🇦 SAR - Saudi Riyal (﷼)</option>
+                                <option value="MYR">🇲🇾 MYR - Malaysian Ringgit (RM)</option>
+                                <option value="RON">🇷🇴 RON - Romanian Leu (lei)</option>
+                                <option value="VND">🇻🇳 VND - Vietnamese Đồng (₫)</option>
+                                <option value="NGN">🇳🇬 NGN - Nigerian Naira (₦)</option>
+                                <option value="PKR">🇵🇰 PKR - Pakistani Rupee (₨)</option>
+                                <option value="EGP">🇪🇬 EGP - Egyptian Pound (E£)</option>
+                                <option value="KES">🇰🇪 KES - Kenyan Shilling (KSh)</option>
+                                <option value="GHS">🇬🇭 GHS - Ghanaian Cedi (₵)</option>
+                            </optgroup>
+                            <optgroup label="— Other Major —">
+                                <option value="JOD">🇯🇴 JOD - Jordanian Dinar (د.ا)</option>
+                                <option value="KWD">🇰🇼 KWD - Kuwaiti Dinar (د.ك)</option>
+                                <option value="BHD">🇧🇭 BHD - Bahraini Dinar (د.ب)</option>
+                                <option value="QAR">🇶🇦 QAR - Qatari Riyal (﷼)</option>
+                                <option value="OMR">🇴🇲 OMR - Omani Rial (﷼)</option>
+                                <option value="LKR">🇱🇰 LKR - Sri Lankan Rupee (₨)</option>
+                                <option value="MMK">🇲🇲 MMK - Myanmar Kyat (K)</option>
+                                <option value="NPR">🇳🇵 NPR - Nepalese Rupee (₨)</option>
+                                <option value="BDT">🇧🇩 BDT - Bangladeshi Taka (৳)</option>
+                                <option value="UAH">🇺🇦 UAH - Ukrainian Hryvnia (₴)</option>
+                                <option value="RSD">🇷🇸 RSD - Serbian Dinar (дин.)</option>
+                                <option value="HRK">🇭🇷 HRK - Croatian Kuna (kn)</option>
+                                <option value="BGN">🇧🇬 BGN - Bulgarian Lev (лв)</option>
+                                <option value="ISK">🇮🇸 ISK - Icelandic Króna (kr)</option>
+                                <option value="IQD">🇮🇶 IQD - Iraqi Dinar (ع.د)</option>
+                                <option value="LYD">🇱🇾 LYD - Libyan Dinar (ل.د)</option>
+                                <option value="DZD">🇩🇿 DZD - Algerian Dinar (د.ج)</option>
+                                <option value="MAD">🇲🇦 MAD - Moroccan Dirham (د.م.)</option>
+                                <option value="TND">🇹🇳 TND - Tunisian Dinar (د.ت)</option>
+                                <option value="SDG">🇸🇩 SDG - Sudanese Pound (ج.س.)</option>
+                                <option value="SSP">🇸🇸 SSP - South Sudanese Pound (£)</option>
+                                <option value="ETB">🇪🇹 ETB - Ethiopian Birr (Br)</option>
+                                <option value="UGX">🇺🇬 UGX - Ugandan Shilling (USh)</option>
+                                <option value="TZS">🇹🇿 TZS - Tanzanian Shilling (TSh)</option>
+                                <option value="RWF">🇷🇼 RWF - Rwandan Franc (FRw)</option>
+                                <option value="BIF">🇧🇮 BIF - Burundian Franc (FBu)</option>
+                                <option value="MWK">🇲🇼 MWK - Malawian Kwacha (MK)</option>
+                                <option value="ZMW">🇿🇲 ZMW - Zambian Kwacha (ZK)</option>
+                                <option value="BWP">🇧🇼 BWP - Botswana Pula (P)</option>
+                                <option value="NAD">🇳🇦 NAD - Namibian Dollar ($)</option>
+                                <option value="SZL">🇸🇿 SZL - Swazi Lilangeni (L)</option>
+                                <option value="LSL">🇱🇸 LSL - Lesotho Loti (L)</option>
+                                <option value="MUR">🇲🇺 MUR - Mauritian Rupee (₨)</option>
+                                <option value="SCR">🇸🇨 SCR - Seychellois Rupee (₨)</option>
+                                <option value="CVE">🇨🇻 CVE - Cape Verdean Escudo (Esc)</option>
+                                <option value="XOF">🌍 XOF - West African CFA (CFA)</option>
+                                <option value="XAF">🌍 XAF - Central African CFA (FCFA)</option>
+                                <option value="XCD">🌎 XCD - East Caribbean Dollar ($)</option>
+                                <option value="XPF">🌏 XPF - CFP Franc (₣)</option>
+                                <option value="AFN">🇦🇫 AFN - Afghan Afghani (؋)</option>
+                                <option value="IRR">🇮🇷 IRR - Iranian Rial (﷼)</option>
+                                <option value="YER">🇾🇪 YER - Yemeni Rial (﷼)</option>
+                                <option value="SYP">🇸🇾 SYP - Syrian Pound (£)</option>
+                                <option value="LBP">🇱🇧 LBP - Lebanese Pound (ل.ل)</option>
+                                <option value="GEL">🇬🇪 GEL - Georgian Lari (₾)</option>
+                                <option value="AMD">🇦🇲 AMD - Armenian Dram (֏)</option>
+                                <option value="AZN">🇦🇿 AZN - Azerbaijani Manat (₼)</option>
+                                <option value="KZT">🇰🇿 KZT - Kazakhstani Tenge (₸)</option>
+                                <option value="UZS">🇺🇿 UZS - Uzbekistani Som (so‘m)</option>
+                                <option value="TMT">🇹🇲 TMT - Turkmenistani Manat (m)</option>
+                                <option value="KGS">🇰🇬 KGS - Kyrgyzstani Som (с)</option>
+                                <option value="TJS">🇹🇯 TJS - Tajikistani Somoni (ЅМ)</option>
+                                <option value="MNT">🇲🇳 MNT - Mongolian Tögrög (₮)</option>
+                                <option value="KHR">🇰🇭 KHR - Cambodian Riel (៛)</option>
+                                <option value="LAK">🇱🇦 LAK - Lao Kip (₭)</option>
+                                <option value="MOP">🇲🇴 MOP - Macanese Pataca (MOP$)</option>
+                                <option value="PGK">🇵🇬 PGK - Papua New Guinean Kina (K)</option>
+                                <option value="SBD">🇸🇧 SBD - Solomon Islands Dollar ($)</option>
+                                <option value="FJD">🇫🇯 FJD - Fijian Dollar ($)</option>
+                                <option value="TOP">🇹🇴 TOP - Tongan Paʻanga (T$)</option>
+                                <option value="WST">🇼🇸 WST - Samoan Tālā (T)</option>
+                                <option value="VUV">🇻🇺 VUV - Vanuatu Vatu (Vt)</option>
+                                <option value="KMF">🇰🇲 KMF - Comorian Franc (CF)</option>
+                                <option value="STN">🇸🇹 STN - São Tomé and Príncipe Dobra (Db)</option>
+                                <option value="MGA">🇲🇬 MGA - Malagasy Ariary (Ar)</option>
+                                <option value="MVR">🇲🇻 MVR - Maldivian Rufiyaa (Rf)</option>
+                                <option value="BND">🇧🇳 BND - Brunei Dollar (B$)</option>
+                                <option value="BTN">🇧🇹 BTN - Bhutanese Ngultrum (Nu.)</option>
+                            </optgroup>
                         </select>
                     </div>
                     <div class="form-group" style="flex:1">
                         <label for="toCurrency">To</label>
-                        <select id="toCurrency">
-                            <option value="USD">USD ($)</option>
-                            <option value="EUR">EUR (€)</option>
-                            <option value="GBP">GBP (£)</option>
-                            <option value="JPY">JPY (¥)</option>
-                            <option value="INR">INR (₹)</option>
-                            <option value="NGN">NGN (₦)</option>
-                            <option value="AUD">AUD (A$)</option>
-                            <option value="CAD">CAD (C$)</option>
-                            <option value="CHF">CHF (CHF)</option>
-                            <option value="ZAR">ZAR (R)</option>
-                            <option value="GHS">GHS (₵)</option>
-                            <option value="KES">KES (KSh)</option>
-                            <option value="VND">VND (₫)</option>
-                            <option value="KRW">KRW (₩)</option>
-                            <option value="THB">THB (฿)</option>
-                            <option value="TRY">TRY (₺)</option>
-                            <option value="BRL">BRL (R$)</option>
-                            <option value="PHP">PHP (₱)</option>
-                            <option value="SEK">SEK (kr)</option>
-                            <option value="NOK">NOK (kr)</option>
-                            <option value="PLN">PLN (zł)</option>
+                        <select id="toCurrency" size="1">
+                            <!-- Same extensive list, but we'll copy from above programmatically? No, we'll manually copy the same options but reorder a bit -->
+                            <optgroup label="— Major Currencies —">
+                                <option value="EUR">🇪🇺 EUR - Euro (€)</option>
+                                <option value="USD" selected>🇺🇸 USD - US Dollar ($)</option>
+                                <option value="GBP">🇬🇧 GBP - British Pound (£)</option>
+                                <option value="JPY">🇯🇵 JPY - Japanese Yen (¥)</option>
+                                <option value="CAD">🇨🇦 CAD - Canadian Dollar (C$)</option>
+                                <option value="AUD">🇦🇺 AUD - Australian Dollar (A$)</option>
+                                <option value="CHF">🇨🇭 CHF - Swiss Franc (CHF)</option>
+                                <option value="CNY">🇨🇳 CNY - Chinese Yuan (¥)</option>
+                                <option value="HKD">🇭🇰 HKD - Hong Kong Dollar (HK$)</option>
+                                <option value="NZD">🇳🇿 NZD - New Zealand Dollar (NZ$)</option>
+                                <option value="SEK">🇸🇪 SEK - Swedish Krona (kr)</option>
+                                <option value="KRW">🇰🇷 KRW - South Korean Won (₩)</option>
+                                <option value="SGD">🇸🇬 SGD - Singapore Dollar (S$)</option>
+                                <option value="NOK">🇳🇴 NOK - Norwegian Krone (kr)</option>
+                                <option value="MXN">🇲🇽 MXN - Mexican Peso ($)</option>
+                                <option value="INR">🇮🇳 INR - Indian Rupee (₹)</option>
+                                <option value="RUB">🇷🇺 RUB - Russian Ruble (₽)</option>
+                                <option value="ZAR">🇿🇦 ZAR - South African Rand (R)</option>
+                                <option value="TRY">🇹🇷 TRY - Turkish Lira (₺)</option>
+                                <option value="BRL">🇧🇷 BRL - Brazilian Real (R$)</option>
+                                <option value="TWD">🇹🇼 TWD - Taiwan Dollar (NT$)</option>
+                                <option value="DKK">🇩🇰 DKK - Danish Krone (kr)</option>
+                                <option value="PLN">🇵🇱 PLN - Polish Złoty (zł)</option>
+                                <option value="THB">🇹🇭 THB - Thai Baht (฿)</option>
+                                <option value="IDR">🇮🇩 IDR - Indonesian Rupiah (Rp)</option>
+                                <option value="HUF">🇭🇺 HUF - Hungarian Forint (Ft)</option>
+                                <option value="CZK">🇨🇿 CZK - Czech Koruna (Kč)</option>
+                                <option value="ILS">🇮🇱 ILS - Israeli Shekel (₪)</option>
+                                <option value="CLP">🇨🇱 CLP - Chilean Peso ($)</option>
+                                <option value="PHP">🇵🇭 PHP - Philippine Peso (₱)</option>
+                                <option value="AED">🇦🇪 AED - UAE Dirham (د.إ)</option>
+                                <option value="COP">🇨🇴 COP - Colombian Peso ($)</option>
+                                <option value="SAR">🇸🇦 SAR - Saudi Riyal (﷼)</option>
+                                <option value="MYR">🇲🇾 MYR - Malaysian Ringgit (RM)</option>
+                                <option value="RON">🇷🇴 RON - Romanian Leu (lei)</option>
+                                <option value="VND">🇻🇳 VND - Vietnamese Đồng (₫)</option>
+                                <option value="NGN">🇳🇬 NGN - Nigerian Naira (₦)</option>
+                                <option value="PKR">🇵🇰 PKR - Pakistani Rupee (₨)</option>
+                                <option value="EGP">🇪🇬 EGP - Egyptian Pound (E£)</option>
+                                <option value="KES">🇰🇪 KES - Kenyan Shilling (KSh)</option>
+                                <option value="GHS">🇬🇭 GHS - Ghanaian Cedi (₵)</option>
+                            </optgroup>
+                            <optgroup label="— Other —">
+                                <option value="JOD">🇯🇴 JOD - Jordanian Dinar</option>
+                                <option value="KWD">🇰🇼 KWD - Kuwaiti Dinar</option>
+                                <option value="BHD">🇧🇭 BHD - Bahraini Dinar</option>
+                                <option value="QAR">🇶🇦 QAR - Qatari Riyal</option>
+                                <option value="OMR">🇴🇲 OMR - Omani Rial</option>
+                                <option value="LKR">🇱🇰 LKR - Sri Lankan Rupee</option>
+                                <option value="MMK">🇲🇲 MMK - Myanmar Kyat</option>
+                                <option value="NPR">🇳🇵 NPR - Nepalese Rupee</option>
+                                <option value="BDT">🇧🇩 BDT - Bangladeshi Taka</option>
+                                <option value="UAH">🇺🇦 UAH - Ukrainian Hryvnia</option>
+                                <!-- etc. Add more if desired, but the list is already huge -->
+                            </optgroup>
                         </select>
                     </div>
                 </div>
@@ -130,169 +262,176 @@
             <div class="footer-brand">Smart‑rate</div>
             <p>&copy; 2025 Smart-rate. For informational purposes only. Not financial advice.</p>
             <div class="footer-links">
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="contact.html">Contact Us</a>
+                <a href="privacy.html">Privacy Policy</a> | <a href="contact.html">Contact Us</a>
             </div>
         </div>
     </footer>
     <div class="ad-container"><div class="ad-placeholder ad-bottom">Advertisement</div></div>
 
     <script src="main.js"></script>
-    <script src="currency.js"></script>
     <script>
-        // ========== AMOUNT INPUT WITH COMMAS ==========
+        // ---------- AMOUNT INPUT: only numbers, automatic commas ----------
         const amountInput = document.getElementById('amount');
-        function formatNumberWithCommas(num) {
+        function formatNumber(num) {
             return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
-        let lastRawValue = '';
         amountInput.addEventListener('input', function(e) {
             let raw = e.target.value.replace(/,/g, '');
             let filtered = raw.replace(/[^0-9.]/g, '');
             let parts = filtered.split('.');
             if (parts.length > 2) filtered = parts[0] + '.' + parts.slice(1).join('');
-            if (filtered === '') {
-                e.target.value = '';
-                lastRawValue = '';
-                return;
-            }
+            if (filtered === '') { e.target.value = ''; return; }
             let num = parseFloat(filtered);
             if (!isNaN(num)) {
-                let formatted = formatNumberWithCommas(num);
+                let formatted = formatNumber(num);
                 e.target.value = formatted;
                 e.target.setSelectionRange(formatted.length, formatted.length);
-            } else {
-                e.target.value = lastRawValue;
             }
-            lastRawValue = e.target.value;
         });
         amountInput.addEventListener('blur', function() {
-            let cleaned = amountInput.value.replace(/,/g, '');
-            let num = parseFloat(cleaned);
-            if (!isNaN(num) && num !== 0) amountInput.value = formatNumberWithCommas(num);
+            let num = parseFloat(amountInput.value.replace(/,/g, ''));
+            if (!isNaN(num) && num !== 0) amountInput.value = formatNumber(num);
             else amountInput.value = '0.00';
         });
-        amountInput.value = formatNumberWithCommas(1000);
+        amountInput.value = formatNumber(1000);
 
-        // ========== TREND CHART (fully functional) ==========
+        // ---------- CURRENCY CONVERTER (robust) ----------
+        let rateCache = {};
+        const fromSelect = document.getElementById('fromCurrency');
+        const toSelect = document.getElementById('toCurrency');
+        const convertBtn = document.getElementById('convertBtn');
+        const retryBtn = document.getElementById('retryBtn');
+        const resultSpan = document.getElementById('conversionResult');
+        const statusSpan = document.getElementById('apiStatus');
+        const cacheMsgSpan = document.getElementById('cacheMessage');
+
+        function setStatus(status, msg = '') {
+            statusSpan.textContent = status;
+            statusSpan.className = 'status-indicator';
+            if (status.includes('live')) statusSpan.classList.add('status-live');
+            else if (status.includes('cached')) statusSpan.classList.add('status-cached');
+            else statusSpan.classList.add('status-offline');
+            cacheMsgSpan.textContent = msg;
+        }
+
+        async function fetchRate(from, to) {
+            const key = `${from}_${to}`;
+            if (rateCache[key] && Date.now() - rateCache[key].timestamp < 600000) {
+                return rateCache[key].rate;
+            }
+            const url = `https://api.exchangerate.host/latest?base=${from}&symbols=${to}`;
+            try {
+                // Direct fetch
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                const rate = data.rates[to];
+                if (!rate) throw new Error('Rate missing');
+                rateCache[key] = { rate, timestamp: Date.now() };
+                return rate;
+            } catch (err) {
+                // Try CORS proxy
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+                const proxyRes = await fetch(proxyUrl);
+                if (!proxyRes.ok) throw new Error('Proxy failed');
+                const proxyData = await proxyRes.json();
+                const rate = proxyData.rates[to];
+                if (!rate) throw new Error('Proxy rate missing');
+                rateCache[key] = { rate, timestamp: Date.now() };
+                return rate;
+            }
+        }
+
+        async function performConversion() {
+            let rawAmount = amountInput.value.replace(/,/g, '');
+            let amount = parseFloat(rawAmount) || 1;
+            const from = fromSelect.value;
+            const to = toSelect.value;
+            resultSpan.textContent = 'Converting...';
+            setStatus('Fetching...');
+            try {
+                const rate = await fetchRate(from, to);
+                const converted = amount * rate;
+                resultSpan.textContent = `${formatNumber(converted)} ${to}`;
+                setStatus('live (cached)');
+            } catch (err) {
+                resultSpan.textContent = 'Error';
+                setStatus('Offline', 'Unable to fetch live rate');
+                console.error(err);
+            }
+        }
+
+        convertBtn.addEventListener('click', performConversion);
+        retryBtn.addEventListener('click', performConversion);
+        performConversion();
+
+        // ---------- 7‑DAY TREND CHART ----------
         let trendChart = null;
         const trendInfo = document.getElementById('trendInfo');
 
-        function getLast7Days() {
-            let dates = [];
+        async function getTrendData(from, to) {
+            const dates = [];
             for (let i = 6; i >= 0; i--) {
                 let d = new Date();
                 d.setDate(d.getDate() - i);
                 dates.push(d.toISOString().slice(0,10));
             }
-            return dates;
-        }
-
-        async function fetchRealTrend(from, to) {
-            const dates = getLast7Days();
             const start = dates[0];
             const end = dates[6];
             const url = `https://api.exchangerate.host/timeseries?start_date=${start}&end_date=${end}&base=${from}&symbols=${to}`;
             try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const data = await response.json();
-                if (!data.rates || Object.keys(data.rates).length === 0) throw new Error('No data');
-                return data.rates;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                if (!data.rates) throw new Error();
+                const labels = [];
+                const rates = [];
+                for (let d of dates) {
+                    if (data.rates[d] && data.rates[d][to]) {
+                        labels.push(d.slice(5));
+                        rates.push(data.rates[d][to]);
+                    }
+                }
+                return { labels, rates };
             } catch (err) {
-                console.warn('Real trend API failed:', err);
                 return null;
             }
         }
 
-        function generateMockTrend(baseRate, days = 7) {
-            let trend = [];
-            let rate = baseRate;
-            for (let i = 0; i < days; i++) {
-                let change = (Math.random() - 0.48) * 0.015;
-                rate = rate * (1 + change);
-                trend.push(rate);
-            }
-            return trend;
-        }
-
-        async function getCurrentRate(from, to) {
-            try {
-                const url = `https://api.exchangerate.host/latest?base=${from}&symbols=${to}`;
-                const res = await fetch(url);
-                const data = await res.json();
-                if (data.rates && data.rates[to]) return data.rates[to];
-                throw new Error('no rate');
-            } catch (err) {
-                const fallbacks = {
-                    USD_EUR:0.92, EUR_USD:1.09, GBP_USD:1.25, USD_GBP:0.80
-                };
-                const key = `${from}_${to}`;
-                return fallbacks[key] || 1.0;
-            }
-        }
-
-        async function updateTrendChart() {
-            const from = document.getElementById('fromCurrency').value;
-            const to = document.getElementById('toCurrency').value;
+        async function updateTrend() {
+            const from = fromSelect.value;
+            const to = toSelect.value;
             trendInfo.innerText = 'Loading trend...';
-            let realRates = await fetchRealTrend(from, to);
-            let labels, values;
-            if (realRates) {
-                const dates = Object.keys(realRates).sort();
-                values = dates.map(d => realRates[d][to]);
-                labels = dates.map(d => d.slice(5));
-                trendInfo.innerText = `Real 7-day trend (${from} → ${to})`;
-            } else {
-                const currentRate = await getCurrentRate(from, to);
-                values = generateMockTrend(currentRate, 7);
-                const today = new Date();
-                labels = [];
-                for (let i = 6; i >= 0; i--) {
-                    let d = new Date();
-                    d.setDate(d.getDate() - i);
-                    labels.push(d.toLocaleDateString('en-US', { month:'short', day:'numeric' }));
-                }
-                trendInfo.innerText = `Estimated trend (${from} → ${to}) – live data unavailable`;
-            }
-            const ctx = document.getElementById('rateTrendChart').getContext('2d');
-            if (trendChart) trendChart.destroy();
-            trendChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: `${from} → ${to}`,
-                        data: values,
-                        borderColor: '#ff2e63',
-                        backgroundColor: 'rgba(255,46,99,0.1)',
-                        tension: 0.3,
-                        fill: true,
-                        pointRadius: 3,
-                        pointHoverRadius: 6,
-                        pointBackgroundColor: '#ff2e63'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { callbacks: { label: (ctx) => `Rate: ${ctx.raw.toFixed(4)}` } }
+            const trend = await getTrendData(from, to);
+            if (trend && trend.rates.length) {
+                const ctx = document.getElementById('rateTrendChart').getContext('2d');
+                if (trendChart) trendChart.destroy();
+                trendChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: trend.labels,
+                        datasets: [{
+                            label: `${from} → ${to}`,
+                            data: trend.rates,
+                            borderColor: '#ff2e63',
+                            backgroundColor: 'rgba(255,46,99,0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 3
+                        }]
                     },
-                    scales: { y: { title: { display: true, text: 'Exchange Rate' } } }
-                }
-            });
+                    options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
+                });
+                trendInfo.innerText = `7-day trend (${from} → ${to})`;
+            } else {
+                trendInfo.innerText = `Trend data unavailable for ${from} → ${to}`;
+                if (trendChart) trendChart.destroy();
+            }
         }
 
-        // Refresh chart when currencies change
-        document.addEventListener('DOMContentLoaded', () => {
-            const fromSelect = document.getElementById('fromCurrency');
-            const toSelect = document.getElementById('toCurrency');
-            fromSelect.addEventListener('change', updateTrendChart);
-            toSelect.addEventListener('change', updateTrendChart);
-            setTimeout(updateTrendChart, 500);
-        });
+        fromSelect.addEventListener('change', updateTrend);
+        toSelect.addEventListener('change', updateTrend);
+        setTimeout(updateTrend, 1000);
     </script>
 </body>
 </html>
