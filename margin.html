@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="keywords" content="currency converter, financial calculators, salary to hourly, VAT calculator, loan interest calculator, markup calculator, profit margin, investment simulator, crypto news, free finance tools">
+    <title>Profit Margin Calculator – Smart-rate</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+</head>
+<body class="light-mode">
+    <button class="theme-toggle-btn" id="themeToggle">🌙</button>
+
+    <header>
+        <div class="container header-container">
+            <div class="brand">Smart‑rate</div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <a href="news.html">News</a>
+                    <li><a href="currency.html">Currency</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+            <div class="kebab-menu">
+                <button class="kebab-button" id="kebabToggle" aria-label="Menu">☰</button>
+                <div class="dropdown-content" id="kebabDropdown">
+                    <a href="index.html">Home</a>
+                    <a href="news.html">News</a>
+                    <a href="about.html">About</a>
+                    <a href="privacy.html">Privacy</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="ad-container"><div class="ad-placeholder ad-top">Advertisement</div></div>
+
+        <div class="container">
+            <div class="section-header">
+                <h1>📊 Profit Margin Calculator</h1>
+                <p>Calculate margin percentage from revenue and cost.</p>
+            </div>
+
+            <div class="card">
+                <div class="form-group">
+                    <label for="marginRevenue">Revenue</label>
+                    <input type="text" id="marginRevenue" value="100.00">
+                </div>
+                <div class="form-group">
+                    <label for="marginCost">Cost</label>
+                    <input type="text" id="marginCost" value="70.00">
+                </div>
+                <button id="calcMarginBtn" class="btn btn-primary">Calculate</button>
+
+                <div class="result-area">
+                    <p><strong>Profit margin:</strong> <span id="marginPercent">0.00</span>%</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="ad-container"><div class="ad-placeholder ad-middle">Advertisement</div></div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-brand">Smart‑rate</div>
+            <p>&copy; 2025 Smart-rate. For informational purposes only. Not financial advice.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="contact.html">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="ad-container"><div class="ad-placeholder ad-bottom">Advertisement</div></div>
+
+    <script src="main.js"></script>
+    <script>
+        function formatNumberWithCommas(num) {
+            return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatPercent(num) {
+            return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function setupCommaInput(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.addEventListener('input', function(e) {
+                let raw = e.target.value.replace(/,/g, '');
+                if (!isNaN(raw) && raw !== '') {
+                    let num = parseFloat(raw);
+                    e.target.value = formatNumberWithCommas(num);
+                } else if (raw === '') {
+                    e.target.value = '';
+                }
+            });
+        }
+
+        setupCommaInput('marginRevenue');
+        setupCommaInput('marginCost');
+
+        document.getElementById('calcMarginBtn').addEventListener('click', function() {
+            const revenueRaw = document.getElementById('marginRevenue').value.replace(/,/g, '');
+            const revenue = parseFloat(revenueRaw) || 0;
+            const costRaw = document.getElementById('marginCost').value.replace(/,/g, '');
+            const cost = parseFloat(costRaw) || 0;
+            let margin = 0;
+            if (revenue > 0) margin = ((revenue - cost) / revenue) * 100;
+            document.getElementById('marginPercent').innerText = formatPercent(margin);
+        });
+    </script>
+</body>
+</html>

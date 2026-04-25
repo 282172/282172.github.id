@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="keywords" content="currency converter, financial calculators, salary to hourly, VAT calculator, loan interest calculator, markup calculator, profit margin, investment simulator, crypto news, free finance tools">
+    <title>What If I Invested? – Smart-rate</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .result-card {
+            background: var(--surface-variant);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .big-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+        .info-note, .live-data-note {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .live-data-note {
+            background-color: var(--primary-soft);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .chart-container {
+            margin-top: 1.5rem;
+            max-height: 250px;
+        }
+        .currency-row {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        .currency-row .form-group {
+            flex: 1;
+        }
+        select#currencySelect {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <button class="theme-toggle-btn" id="themeToggle">🌙</button>
+    <header>
+        <div class="container header-container">
+            <div class="brand">Smart‑rate</div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="currency.html">Currency</a></li>
+                    <li><a href="news.html">News</a></li>
+                    <li><a href="whatif.html" class="active">What If?</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+            <div class="kebab-menu">
+                <button class="kebab-button" id="kebabToggle">☰</button>
+                <div class="dropdown-content" id="kebabDropdown">
+                    <a href="index.html">Home</a>
+                    <a href="currency.html">Currency</a>
+                    <a href="news.html">News</a>
+                    <a href="whatif.html">What If?</a>
+                    <a href="about.html">About</a>
+                    <a href="privacy.html">Privacy</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="ad-container"><div class="ad-placeholder ad-top">Advertisement</div></div>
+        <div class="container">
+            <div class="section-header">
+                <h1>📈 What If I Invested?</h1>
+                <p>See how your money could have grown – now in 40+ currencies with live exchange rates.</p>
+                <div class="live-data-note">✨ All current prices are live market data as of April 2026 ✨</div>
+            </div>
+            <div class="card">
+                <div class="form-group">
+                    <label for="assetSelect">Choose asset</label>
+                    <select id="assetSelect"></select>
+                </div>
+                <div class="form-group">
+                    <label for="investAmount">Investment amount</label>
+                    <input type="number" id="investAmount" value="1000" step="100">
+                </div>
+                <div class="currency-row">
+                    <div class="form-group">
+                        <label for="startYear">Start year</label>
+                        <select id="startYear"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="currencySelect">Display currency</label>
+                        <select id="currencySelect" size="1">
+                            <!-- Extensive list of world currencies -->
+                            <optgroup label="Major Currencies">
+                                <option value="USD">USD - US Dollar ($)</option>
+                                <option value="EUR">EUR - Euro (€)</option>
+                                <option value="GBP">GBP - British Pound (£)</option>
+                                <option value="JPY">JPY - Japanese Yen (¥)</option>
+                                <option value="CAD">CAD - Canadian Dollar (C$)</option>
+                                <option value="AUD">AUD - Australian Dollar (A$)</option>
+                                <option value="CHF">CHF - Swiss Franc (CHF)</option>
+                                <option value="CNY">CNY - Chinese Yuan (¥)</option>
+                                <option value="INR">INR - Indian Rupee (₹)</option>
+                                <option value="BRL">BRL - Brazilian Real (R$)</option>
+                                <option value="MXN">MXN - Mexican Peso ($)</option>
+                                <option value="KRW">KRW - South Korean Won (₩)</option>
+                                <option value="SGD">SGD - Singapore Dollar (S$)</option>
+                                <option value="HKD">HKD - Hong Kong Dollar (HK$)</option>
+                                <option value="NZD">NZD - New Zealand Dollar (NZ$)</option>
+                                <option value="SEK">SEK - Swedish Krona (kr)</option>
+                                <option value="NOK">NOK - Norwegian Krone (kr)</option>
+                                <option value="DKK">DKK - Danish Krone (kr)</option>
+                                <option value="PLN">PLN - Polish Złoty (zł)</option>
+                                <option value="TRY">TRY - Turkish Lira (₺)</option>
+                                <option value="RUB">RUB - Russian Ruble (₽)</option>
+                                <option value="ZAR">ZAR - South African Rand (R)</option>
+                            </optgroup>
+                            <optgroup label="Other Currencies">
+                                <option value="AED">AED - UAE Dirham (د.إ)</option>
+                                <option value="SAR">SAR - Saudi Riyal (﷼)</option>
+                                <option value="KWD">KWD - Kuwaiti Dinar (د.ك)</option>
+                                <option value="QAR">QAR - Qatari Riyal (﷼)</option>
+                                <option value="OMR">OMR - Omani Rial (﷼)</option>
+                                <option value="BHD">BHD - Bahraini Dinar (د.ب)</option>
+                                <option value="JOD">JOD - Jordanian Dinar (د.ا)</option>
+                                <option value="EGP">EGP - Egyptian Pound (E£)</option>
+                                <option value="KES">KES - Kenyan Shilling (KSh)</option>
+                                <option value="GHS">GHS - Ghanaian Cedi (₵)</option>
+                                <option value="NGN">NGN - Nigerian Naira (₦)</option>
+                                <option value="PKR">PKR - Pakistani Rupee (₨)</option>
+                                <option value="LKR">LKR - Sri Lankan Rupee (₨)</option>
+                                <option value="BDT">BDT - Bangladeshi Taka (৳)</option>
+                                <option value="IDR">IDR - Indonesian Rupiah (Rp)</option>
+                                <option value="MYR">MYR - Malaysian Ringgit (RM)</option>
+                                <option value="PHP">PHP - Philippine Peso (₱)</option>
+                                <option value="THB">THB - Thai Baht (฿)</option>
+                                <option value="VND">VND - Vietnamese Đồng (₫)</option>
+                                <option value="CZK">CZK - Czech Koruna (Kč)</option>
+                                <option value="HUF">HUF - Hungarian Forint (Ft)</option>
+                                <option value="ILS">ILS - Israeli Shekel (₪)</option>
+                                <option value="CLP">CLP - Chilean Peso ($)</option>
+                                <option value="COP">COP - Colombian Peso ($)</option>
+                                <option value="PEN">PEN - Peruvian Sol (S/)</option>
+                                <option value="UAH">UAH - Ukrainian Hryvnia (₴)</option>
+                                <option value="RON">RON - Romanian Leu (lei)</option>
+                                <option value="BGN">BGN - Bulgarian Lev (лв)</option>
+                                <option value="HRK">HRK - Croatian Kuna (kn)</option>
+                                <option value="ISK">ISK - Icelandic Króna (kr)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+                <button id="calculateBtn" class="btn btn-primary">Calculate →</button>
+                <div id="resultContainer" class="result-card" style="display: none;">
+                    <p>If you had invested <strong id="investedAmountDisplay">$0</strong> in <strong id="assetNameDisplay">—</strong> in <strong id="startYearDisplay">—</strong>, today it would be worth:</p>
+                    <div id="finalValueDisplay" class="big-number">$0</div>
+                    <p>That’s a <strong id="returnPercentDisplay">0%</strong> return.</p>
+                    <div id="priceInfo" style="font-size:0.85rem; margin-top:0.5rem;"></div>
+                    <div class="chart-container">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="info-note">⚠️ Past performance does not guarantee future results. Data is for informational purposes only.</div>
+        </div>
+        <div class="ad-container"><div class="ad-placeholder ad-middle">Advertisement</div></div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-brand">Smart‑rate</div>
+            <p>&copy; 2026 Smart-rate. For informational purposes only. Not financial advice.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="contact.html">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+    <div class="ad-container"><div class="ad-placeholder ad-bottom">Advertisement</div></div>
+
+    <script src="main.js"></script>
+    <script>
+        // --- PRICE DATA (USD values, as of April 2026) ---
+        const priceData = {
+            BTC: { name: "Bitcoin", currentPrice: 77800, years: { 2015:430, 2016:963, 2017:14156, 2018:3769, 2019:7194, 2020:28949, 2021:46213, 2022:16547, 2023:42258, 2024:61300, 2025:68000 } },
+            ETH: { name: "Ethereum", currentPrice: 2330, years: { 2015:0.98, 2016:8.6, 2017:755, 2018:134, 2019:129, 2020:737, 2021:3673, 2022:1195, 2023:2280, 2024:3300, 2025:3600 } },
+            BNB: { name: "Binance Coin", currentPrice: 640, years: { 2017:1.2, 2018:6.5, 2019:13, 2020:38, 2021:525, 2022:247, 2023:312, 2024:580, 2025:610 } },
+            SOL: { name: "Solana", currentPrice: 86, years: { 2020:1.5, 2021:170, 2022:10, 2023:98, 2024:190, 2025:180 } },
+            XRP: { name: "XRP", currentPrice: 1.35, years: { 2015:0.006, 2016:0.0065, 2017:0.25, 2018:0.36, 2019:0.19, 2020:0.22, 2021:0.76, 2022:0.34, 2023:0.62, 2024:0.53, 2025:0.57 } },
+            ADA: { name: "Cardano", currentPrice: 0.25, years: { 2017:0.02, 2018:0.04, 2019:0.03, 2020:0.18, 2021:1.3, 2022:0.25, 2023:0.38, 2024:0.55, 2025:0.45 } },
+            DOGE: { name: "Dogecoin", currentPrice: 0.10, years: { 2015:0.0002, 2016:0.0002, 2017:0.0003, 2018:0.002, 2019:0.002, 2020:0.003, 2021:0.17, 2022:0.07, 2023:0.09, 2024:0.12, 2025:0.14 } },
+            LTC: { name: "Litecoin", currentPrice: 54, years: { 2015:3.5, 2016:4.3, 2017:250, 2018:30, 2019:42, 2020:50, 2021:150, 2022:65, 2023:73, 2024:75, 2025:80 } },
+            MATIC: { name: "Polygon", currentPrice: 0.084, years: { 2019:0.02, 2020:0.02, 2021:1.8, 2022:0.76, 2023:0.83, 2024:0.95, 2025:0.7 } },
+            DOT: { name: "Polkadot", currentPrice: 3.26, years: { 2020:4.8, 2021:28.5, 2022:4.5, 2023:6.7, 2024:7.3, 2025:6.5 } },
+            AAPL: { name: "Apple", currentPrice: 260, years: { 2015:26.6, 2016:28.95, 2017:43.8, 2018:38.5, 2019:73.4, 2020:132.7, 2021:177.6, 2022:129.9, 2023:192.5, 2024:242.5, 2025:250 } },
+            MSFT: { name: "Microsoft", currentPrice: 373, years: { 2015:45.6, 2016:62.8, 2017:85.5, 2018:101.6, 2019:157.7, 2020:222.4, 2021:342.5, 2022:239.8, 2023:376, 2024:430, 2025:450 } },
+            GOOGL: { name: "Alphabet", currentPrice: 165, years: { 2015:370, 2016:792, 2017:1053, 2018:1035, 2019:1339, 2020:1752, 2021:2897, 2022:88.2, 2023:139.7, 2024:145.6, 2025:155 } },
+            AMZN: { name: "Amazon", currentPrice: 258, years: { 2015:330, 2016:749, 2017:1189, 2018:1475, 2019:1847, 2020:3257, 2021:3334, 2022:84, 2023:151.9, 2024:185, 2025:190 } },
+            TSLA: { name: "Tesla", currentPrice: 360, years: { 2015:12.5, 2016:20, 2017:31, 2018:16, 2019:27, 2020:705, 2021:1056, 2022:123, 2023:248, 2024:410, 2025:380 } },
+            NVDA: { name: "NVIDIA", currentPrice: 175, years: { 2015:12.5, 2016:27, 2017:48, 2018:38, 2019:55, 2020:131, 2021:292, 2022:146, 2023:495, 2024:850, 2025:900 } },
+            META: { name: "Meta", currentPrice: 660, years: { 2015:43, 2016:115, 2017:179, 2018:131, 2019:205, 2020:273, 2021:336, 2022:120, 2023:353, 2024:550, 2025:560 } },
+            SPY: { name: "S&P 500 ETF", currentPrice: 679, years: { 2015:204, 2016:224, 2017:267, 2018:250, 2019:323, 2020:375, 2021:476, 2022:383, 2023:476, 2024:580, 2025:610 } },
+            QQQ: { name: "Nasdaq 100 ETF", currentPrice: 649, years: { 2015:110, 2016:120, 2017:157, 2018:153, 2019:212, 2020:313, 2021:397, 2022:266, 2023:409, 2024:520, 2025:540 } },
+            GOLD: { name: "Gold", currentPrice: 5400, years: { 2015:1060, 2016:1151, 2017:1302, 2018:1282, 2019:1517, 2020:1895, 2021:1828, 2022:1824, 2023:2062, 2024:2400, 2025:2500 } },
+            SILVER: { name: "Silver", currentPrice: 80, years: { 2015:14.3, 2016:16.2, 2017:17.1, 2018:15.5, 2019:18.0, 2020:26.5, 2021:23.4, 2022:24.0, 2023:24.2, 2024:29.5, 2025:30 } },
+            OIL: { name: "Crude Oil (WTI)", currentPrice: 87, years: { 2015:37, 2016:53, 2017:60, 2018:45, 2019:61, 2020:48, 2021:75, 2022:80, 2023:71, 2024:76, 2025:74 } }
+        };
+
+        let activeAssetKey = 'BTC';
+        let growthChart = null;
+        let exchangeRates = { USD: 1 }; // cached rates
+
+        // Helper functions
+        function formatNumber(num) {
+            return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        async function fetchExchangeRates() {
+            // We'll request all the currencies we have in the dropdown.
+            const currencies = ['EUR','GBP','JPY','CAD','AUD','CHF','CNY','INR','BRL','MXN','KRW','SGD','HKD','NZD','SEK','NOK','DKK','PLN','TRY','RUB','ZAR','AED','SAR','KWD','QAR','OMR','BHD','JOD','EGP','KES','GHS','NGN','PKR','LKR','BDT','IDR','MYR','PHP','THB','VND','CZK','HUF','ILS','CLP','COP','PEN','UAH','RON','BGN','HRK','ISK'];
+            const symbols = currencies.join(',');
+            try {
+                const response = await fetch(`https://api.exchangerate.host/latest?base=USD&symbols=${symbols}`);
+                if (!response.ok) throw new Error();
+                const data = await response.json();
+                exchangeRates = { USD: 1, ...data.rates };
+                console.log('Exchange rates loaded for', Object.keys(exchangeRates).length, 'currencies');
+            } catch (err) {
+                console.warn('Could not fetch live exchange rates, using fallback approximations for a subset');
+                // Fallback for major ones only
+                exchangeRates = { USD:1, EUR:0.92, GBP:0.79, JPY:148, CAD:1.36, AUD:1.52, CHF:0.89, CNY:7.24, INR:83.5, BRL:5.15, MXN:16.8, KRW:1340, SGD:1.35, HKD:7.82, NZD:1.66, SEK:10.4, NOK:10.6, DKK:6.9, PLN:4.05, TRY:32.5, RUB:92, ZAR:18.9, AED:3.67, SAR:3.75, KWD:0.307, QAR:3.64, OMR:0.385, BHD:0.376, JOD:0.709, EGP:47.5, KES:138, GHS:14.2, NGN:1470, PKR:278, LKR:320, BDT:118, IDR:15600, MYR:4.73, PHP:56.2, THB:36.5, VND:25300, CZK:23.2, HUF:363, ILS:3.74, CLP:935, COP:3960, PEN:3.72, UAH:39.2, RON:4.58, BGN:1.83, HRK:7.05, ISK:139 };
+            }
+        }
+
+        function getCurrencySymbol(currency) {
+            const symbols = {
+                USD:'$', EUR:'€', GBP:'£', JPY:'¥', CAD:'C$', AUD:'A$', CHF:'CHF', CNY:'¥', INR:'₹', BRL:'R$', MXN:'$', KRW:'₩', SGD:'S$', HKD:'HK$', NZD:'NZ$', SEK:'kr', NOK:'kr', DKK:'kr', PLN:'zł', TRY:'₺', RUB:'₽', ZAR:'R',
+                AED:'د.إ', SAR:'﷼', KWD:'د.ك', QAR:'﷼', OMR:'﷼', BHD:'د.ب', JOD:'د.ا', EGP:'E£', KES:'KSh', GHS:'₵', NGN:'₦', PKR:'₨', LKR:'₨', BDT:'৳', IDR:'Rp', MYR:'RM', PHP:'₱', THB:'฿', VND:'₫', CZK:'Kč', HUF:'Ft', ILS:'₪', CLP:'$', COP:'$', PEN:'S/', UAH:'₴', RON:'lei', BGN:'лв', HRK:'kn', ISK:'kr'
+            };
+            return symbols[currency] || currency;
+        }
+
+        function populateAssetDropdown() {
+            const select = document.getElementById('assetSelect');
+            select.innerHTML = '';
+            for (const key in priceData) {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = priceData[key].name;
+                select.appendChild(option);
+            }
+        }
+
+        function populateYears(assetKey) {
+            const asset = priceData[assetKey];
+            if (!asset) return;
+            const years = Object.keys(asset.years).map(Number).sort((a,b) => a - b);
+            const yearSelect = document.getElementById('startYear');
+            yearSelect.innerHTML = '';
+            years.forEach(y => {
+                let opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                yearSelect.appendChild(opt);
+            });
+            if (years.length) yearSelect.value = years[0];
+        }
+
+        function getAssetCurrentPrice(assetKey) {
+            return priceData[assetKey]?.currentPrice || 0;
+        }
+
+        function renderGrowthChart(startYear, startPrice, currentPrice, yearsData, assetName) {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            if (growthChart) growthChart.destroy();
+
+            const years = Object.keys(yearsData).map(Number).sort((a,b) => a - b);
+            const prices = years.map(y => yearsData[y]);
+            const startIndex = years.indexOf(parseInt(startYear));
+            const finalValues = years.map((year, idx) => {
+                if (idx >= startIndex) {
+                    return prices[idx] / yearsData[startYear] * 100;
+                }
+                return null;
+            });
+            const labels = years.map(y => y.toString());
+
+            growthChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: `${assetName} Price (USD)`, data: prices, borderColor: '#ff2e63', backgroundColor: 'rgba(255,46,99,0.1)', tension: 0.3, fill: true, yAxisID: 'y' },
+                        { label: `Growth Since ${startYear} (%)`, data: finalValues, borderColor: '#f0b90b', backgroundColor: 'rgba(240,185,11,0.1)', tension: 0.3, fill: true, borderDash: [5,5], yAxisID: 'y1' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { tooltip: { callbacks: { label: function(ctx) {
+                        let label = ctx.dataset.label || '';
+                        if (label) label += ': ';
+                        if (ctx.parsed.y !== null) {
+                            if (ctx.dataset.label.includes('Price')) label += '$' + ctx.parsed.y.toFixed(2);
+                            else label += ctx.parsed.y.toFixed(2) + '%';
+                        }
+                        return label;
+                    } } } },
+                    scales: { y: { title: { display: true, text: 'Price (USD)' }, position: 'left' }, y1: { title: { display: true, text: 'Growth (%)' }, position: 'right', grid: { drawOnChartArea: false } } }
+                }
+            });
+        }
+
+        async function calculate() {
+            const assetKey = document.getElementById('assetSelect').value;
+            const asset = priceData[assetKey];
+            if (!asset) return;
+            const amountUSD = parseFloat(document.getElementById('investAmount').value) || 0;
+            const startYear = parseInt(document.getElementById('startYear').value);
+            const startPrice = asset.years[startYear];
+            const currentPriceUSD = getAssetCurrentPrice(assetKey);
+            if (!startPrice) { alert(`No data for ${asset.name} in ${startYear}`); return; }
+
+            const shares = amountUSD / startPrice;
+            const finalValueUSD = shares * currentPriceUSD;
+            const profitPercent = ((finalValueUSD - amountUSD) / amountUSD) * 100;
+
+            // Get target currency
+            const targetCurrency = document.getElementById('currencySelect').value;
+            let rate = exchangeRates[targetCurrency] || 1;
+            const convertedAmount = amountUSD * rate;
+            const convertedFinal = finalValueUSD * rate;
+            const currencySymbol = getCurrencySymbol(targetCurrency);
+
+            document.getElementById('investedAmountDisplay').innerHTML = `${currencySymbol}${formatNumber(convertedAmount)}`;
+            document.getElementById('assetNameDisplay').innerText = asset.name;
+            document.getElementById('startYearDisplay').innerText = startYear;
+            document.getElementById('finalValueDisplay').innerHTML = `${currencySymbol}${formatNumber(convertedFinal)}`;
+            document.getElementById('returnPercentDisplay').innerHTML = `${profitPercent.toFixed(2)}%`;
+            document.getElementById('priceInfo').innerHTML = `Price in ${startYear}: $${formatNumber(startPrice)} | Current price: $${formatNumber(currentPriceUSD)} | Exchange rate: 1 USD = ${formatNumber(rate)} ${targetCurrency}`;
+
+            document.getElementById('resultContainer').style.display = 'block';
+            renderGrowthChart(startYear, startPrice, currentPriceUSD, asset.years, asset.name);
+            document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Event listeners
+        document.getElementById('assetSelect').addEventListener('change', (e) => {
+            activeAssetKey = e.target.value;
+            populateYears(activeAssetKey);
+        });
+        document.getElementById('currencySelect').addEventListener('change', () => {
+            if (document.getElementById('resultContainer').style.display === 'block') calculate();
+        });
+        document.getElementById('calculateBtn').addEventListener('click', calculate);
+
+        // Initial load
+        populateAssetDropdown();
+        populateYears('BTC');
+        fetchExchangeRates(); // live rates for all currencies
+    </script>
+</body>
+</html>

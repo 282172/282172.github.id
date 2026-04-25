@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="keywords" content="currency converter, financial calculators, salary to hourly, VAT calculator, loan interest calculator, markup calculator, profit margin, investment simulator, crypto news, free finance tools">
+    <title>Currency Converter – Smart-rate</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        .chart-container { position: relative; width: 100%; min-height: 250px; }
+        canvas { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body class="light-mode">
+    <button class="theme-toggle-btn" id="themeToggle">🌙</button>
+
+    <header>
+        <div class="container header-container">
+            <div class="brand">Smart‑rate</div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="news.html">News</a></li>
+                    <li><a href="currency.html" class="active">Currency</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+            <div class="kebab-menu">
+                <button class="kebab-button" id="kebabToggle">☰</button>
+                <div class="dropdown-content" id="kebabDropdown">
+                    <a href="index.html">Home</a>
+                    <a href="news.html">News</a>
+                    <a href="currency.html">Currency</a>
+                    <a href="about.html">About</a>
+                    <a href="privacy.html">Privacy</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="ad-container"><div class="ad-placeholder ad-top">Advertisement</div></div>
+        <div class="container">
+            <div class="section-header">
+                <h1>💱 Currency Converter</h1>
+                <p>Live rates, caching, fallback APIs – reliable & fast.</p>
+            </div>
+            <div class="card">
+                <div class="form-group">
+                    <label for="amount">Amount</label>
+                    <input type="text" id="amount" value="1,000.00">
+                </div>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <div class="form-group" style="flex:1">
+                        <label for="fromCurrency">From</label>
+                        <select id="fromCurrency">
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                            <option value="JPY">JPY (¥)</option>
+                            <option value="INR">INR (₹)</option>
+                            <option value="NGN">NGN (₦)</option>
+                            <option value="AUD">AUD (A$)</option>
+                            <option value="CAD">CAD (C$)</option>
+                            <option value="CHF">CHF (CHF)</option>
+                            <option value="ZAR">ZAR (R)</option>
+                            <option value="GHS">GHS (₵)</option>
+                            <option value="KES">KES (KSh)</option>
+                            <option value="VND">VND (₫)</option>
+                            <option value="KRW">KRW (₩)</option>
+                            <option value="THB">THB (฿)</option>
+                            <option value="TRY">TRY (₺)</option>
+                            <option value="BRL">BRL (R$)</option>
+                            <option value="PHP">PHP (₱)</option>
+                            <option value="SEK">SEK (kr)</option>
+                            <option value="NOK">NOK (kr)</option>
+                            <option value="PLN">PLN (zł)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:1">
+                        <label for="toCurrency">To</label>
+                        <select id="toCurrency">
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                            <option value="JPY">JPY (¥)</option>
+                            <option value="INR">INR (₹)</option>
+                            <option value="NGN">NGN (₦)</option>
+                            <option value="AUD">AUD (A$)</option>
+                            <option value="CAD">CAD (C$)</option>
+                            <option value="CHF">CHF (CHF)</option>
+                            <option value="ZAR">ZAR (R)</option>
+                            <option value="GHS">GHS (₵)</option>
+                            <option value="KES">KES (KSh)</option>
+                            <option value="VND">VND (₫)</option>
+                            <option value="KRW">KRW (₩)</option>
+                            <option value="THB">THB (฿)</option>
+                            <option value="TRY">TRY (₺)</option>
+                            <option value="BRL">BRL (R$)</option>
+                            <option value="PHP">PHP (₱)</option>
+                            <option value="SEK">SEK (kr)</option>
+                            <option value="NOK">NOK (kr)</option>
+                            <option value="PLN">PLN (zł)</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="convertBtn" class="btn btn-primary">Convert</button>
+                <button id="retryBtn" class="btn btn-secondary" style="margin-top:0.5rem;">Retry</button>
+                <div class="result-area">
+                    <p><strong>Result:</strong> <span id="conversionResult">—</span></p>
+                    <p><strong>Status:</strong> <span id="apiStatus" class="status-indicator">Idle</span></p>
+                    <p id="cacheMessage" class="info-message"></p>
+                </div>
+            </div>
+            <div style="height: 2rem;"></div>
+            <div class="card">
+                <h3>📈 7-Day Rate Trend</h3>
+                <div class="chart-container"><canvas id="rateTrendChart"></canvas></div>
+                <p id="trendInfo" style="margin-top:0.8rem; text-align:center; font-size:0.85rem;">&nbsp;</p>
+            </div>
+        </div>
+        <div class="ad-container"><div class="ad-placeholder ad-middle">Advertisement</div></div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-brand">Smart‑rate</div>
+            <p>&copy; 2025 Smart-rate. For informational purposes only. Not financial advice.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="contact.html">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+    <div class="ad-container"><div class="ad-placeholder ad-bottom">Advertisement</div></div>
+
+    <script src="main.js"></script>
+    <script src="currency.js"></script>
+    <script>
+        // ========== AMOUNT INPUT WITH COMMAS ==========
+        const amountInput = document.getElementById('amount');
+        function formatNumberWithCommas(num) {
+            return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        let lastRawValue = '';
+        amountInput.addEventListener('input', function(e) {
+            let raw = e.target.value.replace(/,/g, '');
+            let filtered = raw.replace(/[^0-9.]/g, '');
+            let parts = filtered.split('.');
+            if (parts.length > 2) filtered = parts[0] + '.' + parts.slice(1).join('');
+            if (filtered === '') {
+                e.target.value = '';
+                lastRawValue = '';
+                return;
+            }
+            let num = parseFloat(filtered);
+            if (!isNaN(num)) {
+                let formatted = formatNumberWithCommas(num);
+                e.target.value = formatted;
+                e.target.setSelectionRange(formatted.length, formatted.length);
+            } else {
+                e.target.value = lastRawValue;
+            }
+            lastRawValue = e.target.value;
+        });
+        amountInput.addEventListener('blur', function() {
+            let cleaned = amountInput.value.replace(/,/g, '');
+            let num = parseFloat(cleaned);
+            if (!isNaN(num) && num !== 0) amountInput.value = formatNumberWithCommas(num);
+            else amountInput.value = '0.00';
+        });
+        amountInput.value = formatNumberWithCommas(1000);
+
+        // ========== TREND CHART (fully functional) ==========
+        let trendChart = null;
+        const trendInfo = document.getElementById('trendInfo');
+
+        function getLast7Days() {
+            let dates = [];
+            for (let i = 6; i >= 0; i--) {
+                let d = new Date();
+                d.setDate(d.getDate() - i);
+                dates.push(d.toISOString().slice(0,10));
+            }
+            return dates;
+        }
+
+        async function fetchRealTrend(from, to) {
+            const dates = getLast7Days();
+            const start = dates[0];
+            const end = dates[6];
+            const url = `https://api.exchangerate.host/timeseries?start_date=${start}&end_date=${end}&base=${from}&symbols=${to}`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                if (!data.rates || Object.keys(data.rates).length === 0) throw new Error('No data');
+                return data.rates;
+            } catch (err) {
+                console.warn('Real trend API failed:', err);
+                return null;
+            }
+        }
+
+        function generateMockTrend(baseRate, days = 7) {
+            let trend = [];
+            let rate = baseRate;
+            for (let i = 0; i < days; i++) {
+                let change = (Math.random() - 0.48) * 0.015;
+                rate = rate * (1 + change);
+                trend.push(rate);
+            }
+            return trend;
+        }
+
+        async function getCurrentRate(from, to) {
+            try {
+                const url = `https://api.exchangerate.host/latest?base=${from}&symbols=${to}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.rates && data.rates[to]) return data.rates[to];
+                throw new Error('no rate');
+            } catch (err) {
+                const fallbacks = {
+                    USD_EUR:0.92, EUR_USD:1.09, GBP_USD:1.25, USD_GBP:0.80
+                };
+                const key = `${from}_${to}`;
+                return fallbacks[key] || 1.0;
+            }
+        }
+
+        async function updateTrendChart() {
+            const from = document.getElementById('fromCurrency').value;
+            const to = document.getElementById('toCurrency').value;
+            trendInfo.innerText = 'Loading trend...';
+            let realRates = await fetchRealTrend(from, to);
+            let labels, values;
+            if (realRates) {
+                const dates = Object.keys(realRates).sort();
+                values = dates.map(d => realRates[d][to]);
+                labels = dates.map(d => d.slice(5));
+                trendInfo.innerText = `Real 7-day trend (${from} → ${to})`;
+            } else {
+                const currentRate = await getCurrentRate(from, to);
+                values = generateMockTrend(currentRate, 7);
+                const today = new Date();
+                labels = [];
+                for (let i = 6; i >= 0; i--) {
+                    let d = new Date();
+                    d.setDate(d.getDate() - i);
+                    labels.push(d.toLocaleDateString('en-US', { month:'short', day:'numeric' }));
+                }
+                trendInfo.innerText = `Estimated trend (${from} → ${to}) – live data unavailable`;
+            }
+            const ctx = document.getElementById('rateTrendChart').getContext('2d');
+            if (trendChart) trendChart.destroy();
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `${from} → ${to}`,
+                        data: values,
+                        borderColor: '#ff2e63',
+                        backgroundColor: 'rgba(255,46,99,0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 3,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#ff2e63'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: (ctx) => `Rate: ${ctx.raw.toFixed(4)}` } }
+                    },
+                    scales: { y: { title: { display: true, text: 'Exchange Rate' } } }
+                }
+            });
+        }
+
+        // Refresh chart when currencies change
+        document.addEventListener('DOMContentLoaded', () => {
+            const fromSelect = document.getElementById('fromCurrency');
+            const toSelect = document.getElementById('toCurrency');
+            fromSelect.addEventListener('change', updateTrendChart);
+            toSelect.addEventListener('change', updateTrendChart);
+            setTimeout(updateTrendChart, 500);
+        });
+    </script>
+</body>
+</html>

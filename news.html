@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="keywords" content="currency converter, financial calculators, salary to hourly, VAT calculator, loan interest calculator, markup calculator, profit margin, investment simulator, crypto news, free finance tools">
+    <title>Financial News – Smart-rate</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        .news-card { cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .news-card:hover { transform: translateY(-4px); box-shadow: var(--hover-glow); }
+        .news-date, .news-source { font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.5rem; }
+        .news-source { display: inline-block; background: var(--surface-variant); padding: 0.2rem 0.6rem; border-radius: 1rem; font-size: 0.7rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .refresh-btn { margin-left: 1rem; padding: 0.3rem 1rem; font-size: 0.85rem; }
+        .last-updated { font-size: 0.8rem; color: var(--text-tertiary); text-align: center; margin-top: 1rem; }
+    </style>
+</head>
+<body class="light-mode">
+    <button class="theme-toggle-btn" id="themeToggle">🌙</button>
+
+    <header>
+        <div class="container header-container">
+            <div class="brand">Smart‑rate</div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="currency.html">Currency</a></li>
+                    <li><a href="news.html" class="active">News</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+            <div class="kebab-menu">
+                <button class="kebab-button" id="kebabToggle" aria-label="Menu">☰</button>
+                <div class="dropdown-content" id="kebabDropdown">
+                    <a href="index.html">Home</a>
+                    <a href="currency.html">Currency</a>
+                    <a href="news.html">News</a>
+                    <a href="about.html">About</a>
+                    <a href="privacy.html">Privacy</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="ad-container"><div class="ad-placeholder ad-top">Advertisement</div></div>
+
+        <div class="container">
+            <div class="section-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                <div>
+                    <h1>📰 Financial News</h1>
+                    <p>Live headlines from Bloomberg, Reuters, CNBC, and more – updated every 10 minutes.</p>
+                </div>
+                <button id="refreshNewsBtn" class="btn btn-secondary refresh-btn">🔄 Refresh Now</button>
+            </div>
+            <div id="newsGrid" class="card-grid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));">
+                <div class="card" style="text-align: center;"><div class="spinner"></div><p>Fetching latest news...</p></div>
+            </div>
+            <div id="lastUpdated" class="last-updated"></div>
+        </div>
+
+        <div class="ad-container"><div class="ad-placeholder ad-middle">Advertisement</div></div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-brand">Smart‑rate</div>
+            <p>&copy; 2025 Smart-rate. For informational purposes only. Not financial advice.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="contact.html">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="ad-container"><div class="ad-placeholder ad-bottom">Advertisement</div></div>
+
+    <script src="main.js"></script>
+    <script>
+        const newsGrid = document.getElementById('newsGrid');
+        const refreshBtn = document.getElementById('refreshNewsBtn');
+        const lastUpdatedSpan = document.getElementById('lastUpdated');
+
+        const FEEDS = [
+            { url: 'https://www.cnbc.com/id/100003114/device/rss/rss.html', name: 'CNBC' },
+            { url: 'https://feeds.bloomberg.com/markets/news.rss', name: 'Bloomberg' },
+            { url: 'https://feeds.reuters.com/reuters/businessNews', name: 'Reuters' },
+            { url: 'https://feeds.finance.yahoo.com/rss/2.0/headline?s=^GSPC&region=US&lang=en-US', name: 'Yahoo Finance' }
+        ];
+        const PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
+
+        async function fetchFeed(feedUrl, feedName) {
+            const cacheBuster = `&_=${Date.now()}`;
+            const fullUrl = PROXY + encodeURIComponent(feedUrl) + cacheBuster;
+            try {
+                const response = await fetch(fullUrl, { cache: 'no-store' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                if (data.items && data.items.length) return data.items.slice(0, 8).map(item => ({
+                    title: item.title,
+                    description: item.description || item.content?.substring(0, 150) || '',
+                    link: item.link,
+                    pubDate: item.pubDate,
+                    source: feedName
+                }));
+                return null;
+            } catch (err) {
+                console.warn(`Feed ${feedName} failed:`, err);
+                return null;
+            }
+        }
+
+        async function fetchAllFeeds() {
+            for (const feed of FEEDS) {
+                const items = await fetchFeed(feed.url, feed.name);
+                if (items && items.length) return { items, source: feed.name };
+                await new Promise(r => setTimeout(r, 300));
+            }
+            return null;
+        }
+
+        async function loadNews() {
+            newsGrid.innerHTML = '<div class="card" style="text-align: center;"><div class="spinner"></div><p>Fetching latest headlines...</p></div>';
+            const result = await fetchAllFeeds();
+            if (result && result.items.length) {
+                renderNews(result.items, result.source);
+            } else {
+                newsGrid.innerHTML = `<div class="card error-message">⚠️ Unable to fetch news. Please check your internet connection.</div>`;
+                lastUpdatedSpan.innerText = `Last attempt failed – click refresh to try again.`;
+            }
+        }
+
+        function renderNews(items, sourceName) {
+            const html = items.map(item => `
+                <div class="card news-card" onclick="window.open('${item.link}', '_blank')">
+                    <span class="news-source">📰 ${item.source || sourceName}</span>
+                    <h3>${item.title}</h3>
+                    <p>${(item.description || '').substring(0, 120)}${(item.description || '').length > 120 ? '…' : ''}</p>
+                    <div class="news-date">🕒 ${new Date(item.pubDate).toLocaleString()}</div>
+                </div>
+            `).join('');
+            newsGrid.innerHTML = html;
+            lastUpdatedSpan.innerText = `Last updated: ${new Date().toLocaleTimeString()} – Live from ${sourceName}`;
+        }
+
+        refreshBtn.addEventListener('click', loadNews);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNews();
+            setInterval(loadNews, 600000);
+        });
+    </script>
+</body>
+</html>
